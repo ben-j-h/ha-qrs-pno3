@@ -32,9 +32,12 @@ Ideas for after `v0.2.x`. Nothing here is committed; it's a scratchpad.
   transport + tempo/transpose + fault detail + the live keyboard + cover art in
   one card. Not needed for normal use — the built-in Media Control card already
   covers playback.
-- **`media_source` integration.** Register the library as a media source so it
-  shows up in HA's global media browser and can be targeted by "Play on…" from
-  other players / TTS flows.
+- **`media_source` integration — probably not.** Registering the library as a
+  `media_source` would make piano tracks browsable/playable from *every* player
+  (Sonos, cast targets, …), which is usually unwanted — the songs are `.qrs` /
+  local paths only the piano can play. The current design deliberately does
+  **not** register one: browsing is scoped to the piano's own entity. Only
+  revisit this if there's a concrete need, and gate it behind an option.
 - **USB import service.** `qrs_pno3.import_usb` wrapping
   `fileUsb.php {record:"copyFromUSB"}` — trigger a copy of a file already on a
   plugged-in USB stick into "My Saved Music". (Can't push bytes over HTTP; no

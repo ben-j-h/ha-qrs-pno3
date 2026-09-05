@@ -51,6 +51,13 @@ No custom card needed — the entity is a real media player, so the built-in
 the media browser (Playlists / Artists / Albums / Genres → songs). It just has no
 album art, so the card shows a plain music icon.
 
+**Scope:** browsing is confined to this entity — the piano's browser shows only
+its own library, not Home Assistant's "My media" / TTS / radio. And the library
+is **not** registered as a media source, so piano tracks never show up when you
+browse from a Sonos, a cast target, or anywhere else. (The `media_player`
+*more-info* dialog still renders HA's full-size media widget — that's the entity
+type; use a `tile` or `media-control` card for a compact view.)
+
 Pair it with an entities/tile card for the piano-specific bits:
 
 ```yaml
