@@ -1,13 +1,17 @@
 {
   "domain": "qrs_pno3",
   "name": "QRS PNO3 Player Piano",
-  "codeowners": ["@ben-j-h"],
+  "codeowners": [
+    "@ben-j-h"
+  ],
   "config_flow": true,
   "documentation": "https://github.com/ben-j-h/ha-qrs-pno3",
   "integration_type": "device",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/ben-j-h/ha-qrs-pno3/issues",
-  "loggers": ["custom_components.qrs_pno3"],
+  "loggers": [
+    "custom_components.qrs_pno3"
+  ],
   "requirements": [],
-  "version": "0.1.0"
+  "version": "0.2.0"
 }
