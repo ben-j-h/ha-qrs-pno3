@@ -44,6 +44,35 @@ HTTP API on your LAN — no cloud, no QRS account.
 Copy `custom_components/qrs_pno3/` into your HA `config/custom_components/`
 directory and restart.
 
+## Dashboard
+
+No custom card needed — the entity is a real media player, so the built-in
+**Media Control** card handles playback, seek, volume, repeat/shuffle, power and
+the media browser (Playlists / Artists / Albums / Genres → songs). It just has no
+album art, so the card shows a plain music icon.
+
+Pair it with an entities/tile card for the piano-specific bits:
+
+```yaml
+type: vertical-stack
+cards:
+  - type: media-control
+    entity: media_player.pno3_192_168_30_140
+  - type: entities
+    title: Piano
+    entities:
+      - switch.pno3_192_168_30_140_solenoid_rail_power
+      - sensor.pno3_192_168_30_140_system_faults
+      - sensor.pno3_192_168_30_140_system_warnings
+      - sensor.pno3_192_168_30_140_library_songs
+      - button.pno3_192_168_30_140_clear_faults
+      - button.pno3_192_168_30_140_stop_panic
+      - button.pno3_192_168_30_140_refresh_library_cache
+```
+
+(Enable the `tempo` / `transpose` number entities in the entity settings if you
+want them — they're read-only in practice; see the caveats.)
+
 ## Options
 
 **Settings → Devices & Services → QRS PNO3 → Configure**
