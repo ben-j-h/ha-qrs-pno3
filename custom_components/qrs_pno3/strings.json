@@ -1,0 +1,105 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "QRS PNO3 Player Piano",
+        "description": "Enter the IP address or hostname of the PNO3 / PNOmation controller on your LAN.",
+        "data": {
+          "host": "Host"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not reach the controller at that address.",
+      "unknown": "Unexpected error talking to the controller."
+    },
+    "abort": {
+      "already_configured": "This controller is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "QRS PNO3 options",
+        "data": {
+          "playing_poll_interval": "Poll interval while playing (seconds)",
+          "idle_poll_interval": "Poll interval while idle (seconds)",
+          "params_refresh_interval": "Full parameter refresh interval (seconds, 0 = disable)",
+          "turn_off_stops_playback": "\"Turn off\" also stops playback"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "system_faults": { "name": "System faults" },
+      "system_warnings": { "name": "System warnings" },
+      "library_songs": { "name": "Library songs" },
+      "library_version": { "name": "Library version" },
+      "tag_version": { "name": "Tag version" },
+      "download_progress": { "name": "Download progress" }
+    },
+    "switch": {
+      "rail_power": { "name": "Solenoid rail power" }
+    },
+    "number": {
+      "tempo": { "name": "Tempo (experimental)" },
+      "transpose": { "name": "Transpose (experimental)" }
+    },
+    "button": {
+      "clear_faults": { "name": "Clear faults" },
+      "panic_stop": { "name": "Stop (panic)" },
+      "refresh_library": { "name": "Refresh library cache" }
+    }
+  },
+  "services": {
+    "refresh_library": {
+      "name": "Refresh library cache",
+      "description": "Force a full rebuild of the local music-library cache.",
+      "fields": {
+        "entry_id": { "name": "Config entry", "description": "Limit to specific config entries (default: all)." }
+      }
+    },
+    "play_song": {
+      "name": "Play song",
+      "description": "Play a song by music id or by searching the cached library.",
+      "fields": {
+        "entry_id": { "name": "Config entry", "description": "Target config entries." },
+        "music_id": { "name": "Music ID", "description": "musicId from the library cache." },
+        "query": { "name": "Search text", "description": "Free-text match on title/artist/album/genre." }
+      }
+    },
+    "send_command": {
+      "name": "Send raw command",
+      "description": "Send a raw pipe-language command via sendCommand.",
+      "fields": {
+        "entry_id": { "name": "Config entry", "description": "Target config entries." },
+        "command": { "name": "Command", "description": "e.g. \"$|60000\" or \"V\"." },
+        "apply_checksum": { "name": "Add checksum", "description": "Prefix each sub-command with its ASCII-sum checksum." }
+      }
+    },
+    "set_tempo": {
+      "name": "Set tempo (experimental)",
+      "description": "Write controller parameter 10000.",
+      "fields": {
+        "entry_id": { "name": "Config entry", "description": "Target config entries." },
+        "value": { "name": "Tempo", "description": "Percent offset, -100 to 100." }
+      }
+    },
+    "set_transpose": {
+      "name": "Set transpose (experimental)",
+      "description": "Write controller parameter 10002.",
+      "fields": {
+        "entry_id": { "name": "Config entry", "description": "Target config entries." },
+        "value": { "name": "Transpose", "description": "Semitones, -24 to 24." }
+      }
+    },
+    "clear_faults": {
+      "name": "Clear faults",
+      "description": "Send requestType=clrFaults to the controller.",
+      "fields": {
+        "entry_id": { "name": "Config entry", "description": "Target config entries." }
+      }
+    }
+  }
+}

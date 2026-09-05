@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# HA / test artifacts
+.storage/
+*.db
+*.db-wal
+*.db-shm
+
+# Local reverse-engineering scratch (keep docs + curated samples, drop bulky raw dumps)
+research/raw/
+research/probe/__pycache__/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store

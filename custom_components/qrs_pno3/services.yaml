@@ -1,0 +1,123 @@
+refresh_library:
+  name: Refresh library cache
+  description: >-
+    Force a full rebuild of the local SQLite mirror of the piano's music library
+    (music_stream.php + tags.php + playlist.php). Normally this happens
+    automatically when the controller bumps its library/tag version.
+  fields:
+    entry_id:
+      name: Config entry
+      description: "Limit to specific QRS PNO3 config entries (default: all entries)."
+      required: false
+      example: '["01J9Z..."]'
+      selector:
+        config_entry:
+          integration: qrs_pno3
+
+play_song:
+  name: Play song
+  description: Play a specific song by its music id, or by a free-text search of the cache.
+  fields:
+    entry_id:
+      name: Config entry
+      required: false
+      selector:
+        config_entry:
+          integration: qrs_pno3
+    music_id:
+      name: Music ID
+      description: musicId from the library cache (see the media_player attributes / browse).
+      required: false
+      example: 2489
+      selector:
+        number:
+          min: 0
+          max: 9999999
+          mode: box
+    query:
+      name: Search text
+      description: Matched against title / artist / album / genre; first hit is played.
+      required: false
+      example: Elton John Rocket Man
+      selector:
+        text:
+
+send_command:
+  name: Send raw command
+  description: >-
+    Advanced. Send a raw pipe-language command through changePlaySettings.php
+    (requestType=sendCommand). By default the ASCII checksum prefix is added for
+    you. Examples: "$|60000" (seek to 60s), "V" (restart current track).
+  fields:
+    entry_id:
+      name: Config entry
+      required: false
+      selector:
+        config_entry:
+          integration: qrs_pno3
+    command:
+      name: Command
+      required: true
+      example: "$|60000"
+      selector:
+        text:
+    apply_checksum:
+      name: Add checksum
+      description: Prefix each sub-command with its ASCII-sum checksum (leave on unless you know better).
+      required: false
+      default: true
+      selector:
+        boolean:
+
+set_tempo:
+  name: Set tempo (experimental)
+  description: >-
+    Write controller parameter 10000. Accepted by the device but no runtime
+    effect was observed in testing - see the docs.
+  fields:
+    entry_id:
+      name: Config entry
+      required: false
+      selector:
+        config_entry:
+          integration: qrs_pno3
+    value:
+      name: Tempo
+      description: Percent offset, -100 to 100.
+      required: true
+      selector:
+        number:
+          min: -100
+          max: 100
+          mode: slider
+
+set_transpose:
+  name: Set transpose (experimental)
+  description: Write controller parameter 10002 (semitones). Same caveat as set_tempo.
+  fields:
+    entry_id:
+      name: Config entry
+      required: false
+      selector:
+        config_entry:
+          integration: qrs_pno3
+    value:
+      name: Transpose
+      description: Semitones, -24 to 24.
+      required: true
+      selector:
+        number:
+          min: -24
+          max: 24
+          mode: slider
+
+clear_faults:
+  name: Clear faults
+  description: Send requestType=clrFaults to the controller.
+  fields:
+    entry_id:
+      name: Config entry
+      required: false
+      selector:
+        config_entry:
+          integration: qrs_pno3
