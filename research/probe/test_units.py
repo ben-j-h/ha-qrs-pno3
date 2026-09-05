@@ -76,7 +76,10 @@ check(
 print("src parsing")
 m = _SRC_RE.search("/media/microsdp1/801341/01.qrs")
 check("catalog/track from qrs path", bool(m) and m.group(1) == "801341" and m.group(2) == "01")
-check("factory path yields no match", _SRC_RE.search("/usr/factory/noIndexFiles/Sample_QRS.qrs") is None)
+check(
+    "factory path yields no match",
+    _SRC_RE.search("/usr/factory/noIndexFiles/Sample_QRS.qrs") is None,
+)
 
 
 # --- fake aiohttp session serving the sample files ----------------------
@@ -125,7 +128,7 @@ async def main() -> None:
     api = PnoApiClient("192.0.2.1", session)
 
     print("api.async_quick_state")
-    pb, deltas, ss, sset = await api.async_quick_state()
+    pb, deltas, ss, _sset = await api.async_quick_state()
     check("playback has currentMusicId 2489", pb.get("currentMusicId") == 2489)
     check("player state present", "currentPlayerState" in pb)
     check("deltas parsed (id 10000 tempo)", 10000 in deltas, deltas)
@@ -174,7 +177,11 @@ async def main() -> None:
         check("rebuild wrote > 14000 songs", stats["songs"] > 14000, stats)
 
         t = await lib.async_get_track(2489)
-        check("get_track 2489 -> Barnabas Fekete", t is not None and t.artist == "Barnabas Fekete", t)
+        check(
+            "get_track 2489 -> Barnabas Fekete",
+            t is not None and t.artist == "Barnabas Fekete",
+            t,
+        )
         check("get_track 2489 title", t and t.title == "1900 Love Song", t and t.title)
         check("track.display formats", t and t.display == "Barnabas Fekete - 1900 Love Song")
 
@@ -182,7 +189,10 @@ async def main() -> None:
         check("search finds it", any(h.music_id == 2489 for h in hits), len(hits))
 
         artists = await lib.async_distinct("artist")
-        check("distinct artists non-empty + sorted", len(artists) > 100 and artists == sorted(artists, key=str.lower))
+        check(
+            "distinct artists non-empty + sorted",
+            len(artists) > 100 and artists == sorted(artists, key=str.lower),
+        )
 
         by = await lib.async_by("artist", "Barnabas Fekete")
         check("by artist returns multiple", len(by) >= 5, len(by))

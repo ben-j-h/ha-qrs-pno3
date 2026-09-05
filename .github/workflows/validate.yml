@@ -17,6 +17,9 @@ jobs:
         uses: hacs/action@main
         with:
           category: integration
+          # No brand assets yet (would require a PR to home-assistant/brands).
+          # Custom-repository installs do not need them.
+          ignore: brands
 
   hassfest:
     name: hassfest
@@ -32,4 +35,4 @@ jobs:
       - uses: actions/checkout@v4
       - uses: astral-sh/ruff-action@v3
         with:
-          args: "check custom_components/qrs_pno3"
+          src: "custom_components/qrs_pno3"
