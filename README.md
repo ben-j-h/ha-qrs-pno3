@@ -119,9 +119,22 @@ streaming "radio", cloud voice assistants and away-from-home app control. It run
 an unauthenticated HTTP API, an old (Dropbear 2017.75) SSH server and an outbound
 MQTT bridge to QRS, so an **isolated / no-internet VLAN is recommended** — just
 allow your HA host to reach `PNO3:80`, and open egress temporarily when you want
-to buy music or update firmware. You can also add your own MIDI/MP3/WAV/QRS files
-locally (USB import, on-piano recording, or SFTP into `/media/saved/`). Details:
+to buy music or update firmware.
+
+You can add your own music locally with no QRS account — accepted types are
+`.mid`, `.qrs`, `.mp3`, `.wav`. A plain **Standard MIDI File** is all it takes to
+drive the keys (DAW export, MuseScore, a recorded keyboard, SMFs off the net);
+`.mp3`/`.wav` play through the speakers only; `.qrs` is QRS's MIDI-plus-expression
+format you'll only get from their catalog. Get files onto the piano via USB
+import, the on-piano record button, or SFTP into `/media/saved/`. Format details,
+limits (this unit drives MIDI notes 25–104, 16 voices) and connectivity notes:
 [`research/07-adding-music-and-connectivity.md`](research/07-adding-music-and-connectivity.md).
+
+## Roadmap
+
+Post-`v0.2.x` ideas (test suite, live "keys playing" data + a piano panel card,
+cover art, USB-import service, DHCP discovery, …) are in
+[`ROADMAP.md`](ROADMAP.md).
 
 ## Repo layout
 

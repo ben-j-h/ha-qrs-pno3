@@ -21,6 +21,38 @@ The app groups content into `rel` types, derived from the file path:
 
 Accepted file types for saved music: **`.mp3`, `.wav`, `.mid`, `.qrs`** (`qrs.musicTypes`).
 
+## File formats — what they are, what plays the keys
+
+`all_stream.php`'s `fileTranslationCurve` enumerates how the controller ingests
+each source: `Midi File`, `.QRS Midi File`, `MP3/AMI File`, `MP3/Midi File Combo`,
+`MP3/.QRS File Combo`.
+
+| Ext | What it is | Plays the piano keys? | Can you make one? |
+|-----|-----------|-----------------------|-------------------|
+| **`.mid`** | Standard MIDI File (SMF type 0 or 1). Note-on/off + velocity + CC64 sustain → solenoids. | **Yes** | **Yes — anything.** DAW export, MuseScore, a recorded MIDI keyboard, SMFs off the internet. This is the universal upload format. |
+| **`.qrs`** | QRS's format = *MIDI plus QRS expression data* (finer dynamics/pedal from roll scans + live capture, "SyncAlong" markers, embedded metadata). Undocumented. | **Yes** (richer nuance than raw MIDI) | Not really — produced by QRS's catalog / authoring tools. You'll only have these from QRS. |
+| **`.mp3` / `.wav`** | Plain audio, played through the controller's line outputs / amp. | **No** — keys don't move | Yes, but it's just an audio player then |
+| **`.ami`** ("MP3/AMI File") | QRS "Audio + MIDI Interleaved" — one file with an MP3 backing track + the MIDI piano part, for accompaniment (piano plays live, band plays through speakers, time-synced) | Yes (the MIDI part) | No — QRS format |
+| **MP3 + MIDI/QRS "combo"** | Two files, same basename, same folder (`Song.mp3` + `Song.mid`). Played together, time-synced. | Yes (the MIDI/QRS part) | **Yes** — just pair the files yourself |
+
+### Practical: what to upload to drive the piano
+- **`.mid`** is the answer. Put the piano part on any channel (default routing
+  plays incoming notes). Velocity 1–127 → hammer force; CC64 → sustain pedal.
+  Program-change / GM instrument is ignored for the piano (it's always piano).
+- For a "full band" effect, drop `Song.mp3` next to `Song.mid` in the same
+  `/media/saved/<Genre>/<Album>/` folder.
+
+### Limits that affect playback (from `settings_dictionary.md`, this unit)
+- Driven note range: **MIDI 25–104** (`Lowest Note`=25, `Number of Notes`=80).
+  Notes outside get clamped/dropped. (A full 88-key piano would be 21–108; this
+  system is configured for 80 notes.)
+- **Max Simultaneous Notes = 16.** Denser chords drop voices.
+- Solenoids can't re-strike a key infinitely fast (`Note Delay`, `Absolute Min
+  Force`, `Max Note On Time` params) — MIDI with machine-gun repeated notes or
+  sustained-forever notes will sound rough or cut off.
+- Non-piano-idiomatic MIDI (orchestral reductions, extreme ranges) plays, but
+  imperfectly.
+
 For **saved** music the metadata (album/genre/artist/track) is parsed from the
 **path and filename** (`saved/<Genre>/<Album>/<NNN Title>.mid`, or `... <Artist> - <Title>.mid`)
 - there is no tag-DB entry to create. The controller re-scans and indexes these
