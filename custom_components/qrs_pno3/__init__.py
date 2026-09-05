@@ -70,10 +70,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: PnoConfigEntry) -> bool:
     session = async_get_clientsession(hass)
     api = PnoApiClient(entry.data[CONF_HOST], session)
 
-    db_dir = hass.config.path(".storage", STORAGE_SUBDIR)
-    await hass.async_add_executor_job(os.makedirs, db_dir, True)
-    library = PnoLibrary(hass, api, os.path.join(db_dir, f"{entry.entry_id}.db"))
-    await library.async_setup()
+    db_path = hass.config.path(".storage", STORAGE_SUBDIR, f"{entry.entry_id}.db")
+    library = PnoLibrary(hass, api, db_path)
+    await library.async_setup()  # creates the parent dir (exist_ok) in the executor
 
     coordinator = PnoCoordinator(hass, entry, api, library)
     await coordinator.async_config_entry_first_refresh()

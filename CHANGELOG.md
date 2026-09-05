@@ -3,6 +3,15 @@
 All notable changes to this integration are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [0.2.1] - 2026-09-05
+
+### Fixed
+- `async_setup_entry` crashed with `FileExistsError` when the
+  `.storage/qrs_pno3` directory already existed (i.e. removing and re-adding
+  the integration, or a second config entry). The redundant `os.makedirs` call
+  passed `True` as `mode` instead of `exist_ok`; directory creation is now left
+  to the library layer, which does it correctly.
+
 ## [0.2.0] - 2026-09-05
 
 Clean tag that folds in the CI configuration landed after `v0.1.0`; no
