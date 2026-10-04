@@ -111,14 +111,12 @@ class PnoMediaPlayer(PnoEntity, MediaPlayerEntity):
 
     @property
     def media_position(self) -> int | None:
-        ms = self._pb.get("currentTrackProgrssMs")
-        if ms is None or ms < 0:
-            return None
-        return int(ms // 1000)
+        ms = self.coordinator.data.position_ms
+        return None if ms is None else int(ms // 1000)
 
     @property
     def media_position_updated_at(self):
-        return self.coordinator.data.updated_at
+        return self.coordinator.data.position_at
 
     @property
     def media_content_id(self) -> str | None:

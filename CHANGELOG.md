@@ -3,6 +3,16 @@
 All notable changes to this integration are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [0.2.2] - 2026-10-04
+
+### Fixed
+- `media_position_updated_at` was stamped with the poll time on every poll
+  (every 2 s while playing *or paused*), so an idle, paused piano pushed a
+  state change to every open dashboard ~30 times a minute. The position and
+  its timestamp are now a snapshot that is only re-taken when the player
+  state changes or playback drifts more than 2 s from where Home Assistant
+  would extrapolate it (seek, track change, stall).
+
 ## [0.2.1] - 2026-09-05
 
 ### Fixed

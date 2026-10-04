@@ -29,6 +29,9 @@ from .library import PnoLibrary, Track
 
 _LOGGER = logging.getLogger(__name__)
 
+# re-stamp the media position only when it is this far off the extrapolation
+POSITION_DRIFT_MS = 2000
+
 
 @dataclass(slots=True)
 class PnoData:
@@ -39,6 +42,11 @@ class PnoData:
     track: Track | None
     updated_at: datetime
     library_stats: dict[str, Any] = field(default_factory=dict)
+    # media position snapshot: only re-stamped when the player state changes or
+    # playback drifts from what HA would extrapolate, so an idle or paused piano
+    # (or one playing steadily) doesn't push a state change on every poll
+    position_ms: int | None = None
+    position_at: datetime | None = None
 
     # convenience -----------------------------------------------------
     @property
@@ -78,6 +86,7 @@ class PnoCoordinator(DataUpdateCoordinator[PnoData]):
         self._last_lib_version: Any = None
         self._last_tag_version: Any = None
         self._syncing = False
+        self._pos: tuple[int, int | None, datetime | None] = (-1, None, None)
         super().__init__(
             hass,
             _LOGGER,
@@ -150,13 +159,36 @@ class PnoCoordinator(DataUpdateCoordinator[PnoData]):
             interval = self._opt(OPT_IDLE_INTERVAL, DEFAULT_IDLE_INTERVAL)
         self.update_interval = timedelta(seconds=interval)
 
+        now_dt = dt_util.utcnow()
+        position_ms, position_at = self._position_snapshot(playback, now_dt)
+
         return PnoData(
             playback=playback,
             params=dict(self._params),
             track=track,
-            updated_at=dt_util.utcnow(),
+            updated_at=now_dt,
             library_stats=stats,
+            position_ms=position_ms,
+            position_at=position_at,
         )
+
+    def _position_snapshot(
+        self, playback: dict[str, Any], now: datetime
+    ) -> tuple[int | None, datetime | None]:
+        state = int(playback.get("currentPlayerState", 0) or 0)
+        ms = playback.get("currentTrackProgrssMs")
+        ms = int(ms) if ms is not None and ms >= 0 else None
+        last_state, last_ms, last_at = self._pos
+        if state == last_state and last_at is not None and (ms is None) == (last_ms is None):
+            if ms is None:
+                return last_ms, last_at
+            expected = last_ms
+            if state == STATE_PLAYING:
+                expected += int((now - last_at).total_seconds() * 1000)
+            if abs(ms - expected) <= POSITION_DRIFT_MS:
+                return last_ms, last_at
+        self._pos = (state, ms, now)
+        return ms, now
 
     # -- library sync ------------------------------------------
     def _schedule_library_sync(self, lib_v: Any, tag_v: Any) -> None:
